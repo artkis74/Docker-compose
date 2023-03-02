@@ -2,6 +2,8 @@ version: "3.9"
 
 volumes:
   pgdata:
+  static_volume:
+  nginx:
 
 networks:
   backend:
@@ -64,6 +66,19 @@ services:
       - postgres
     ports:
       - "8000:8000"
+    volumes:
+      - static_volume:/docker-compose/stocks_products/staticfiles
     networks:
       - db_net
       - backend
+  nginx:
+    build: ./nginx
+    ports:
+      - "8888:80"
+    volumes:
+       - ./static_volume:/docker-compose/stocks_products/stocks_products/staticfiles
+       - ./nginx:/etc/nginx/conf.d
+    networks:
+      - backend
+    depends_on:
+      - django_app
